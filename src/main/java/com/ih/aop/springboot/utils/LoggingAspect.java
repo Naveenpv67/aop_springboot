@@ -1,5 +1,7 @@
 package com.ih.aop.springboot.utils;
 
+import java.util.Arrays;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -15,10 +17,15 @@ public class LoggingAspect {
     
     @Around("execution(* com.ih.aop.springboot.api.TaskController.*(..))")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
-        long start = System.currentTimeMillis();
-        Object proceed = joinPoint.proceed();
-        long executionTime = System.currentTimeMillis() - start;
-        logger.info(joinPoint.getSignature() + " executed in " + executionTime + "ms");
-        return proceed;
+    	long startTime = System.currentTimeMillis();
+
+        Object result = joinPoint.proceed();
+
+        long endTime = System.currentTimeMillis();
+        long executionTime = endTime - startTime;
+
+        logger.info("{} executed in {} ms with args {} and result {}", joinPoint.getSignature(), executionTime, Arrays.toString(joinPoint.getArgs()), result);
+
+        return result;
     }
 }
